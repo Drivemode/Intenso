@@ -1,0 +1,72 @@
+apply plugin: 'jacoco'
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    packagingOptions {
+        exclude 'LICENSE.txt'
+    }
+
+    jacoco {
+        version "0.7.7.201606060606"
+    }
+
+    testOptions {
+        unitTests.all {
+// configure the set of classes for JUnit tests
+            include project.hasProperty("testFilter") ? "**/*${project.ext.testFilter}*Test.class" : '**/*Test.class'
+            exclude '**/espresso/**/*.class'
+
+            // configure max heap size of the test JVM
+            maxHeapSize = '2048m'
+
+            // configure the test JVM arguments
+            jvmArgs '-XX:MaxPermSize=512m', '-XX:-UseSplitVerifier'
+
+            // Specify max number of processes (default is 1)
+            maxParallelForks = 1
+
+            // Specify max number of test classes to execute in a test process
+            // before restarting the process (default is unlimited)
+            forkEvery = 150
+
+            // configure whether failing tests should fail the build
+            ignoreFailures false
+
+            systemProperty 'robolectric.logging.enabled', 'true'
+
+            testLogging {
+                events 'passed', 'skipped', 'failed', 'standardError'
+            }
+            jacoco {
+                includeNoLocationClasses = true
+            }
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    testCompile "org.robolectric:robolectric:3.2.2"
+}
+
+apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
+
+afterEvaluate {
+    androidJavadocs.failOnError = false
+    androidJavadocs.classpath += project.android.libraryVariants.toList().first().javaCompile.classpath
+}
