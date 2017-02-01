@@ -5,6 +5,7 @@ import android.os.Build;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -14,6 +15,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
 
 @RunWith(RobolectricTestRunner.class)
+@Config(manifest=Config.NONE)
 public class IntensoTest {
 	@Test
 	public void ctor() throws Exception {
@@ -30,11 +32,18 @@ public class IntensoTest {
 	}
 
 	@Test
-	public void overwrite() throws Exception {
+	public void overwrite_staticField() throws Exception {
 		assertNotEquals("hogehogehogehoge", Build.BRAND);
 		Intenso.overwrite(Build.class, "BRAND", "hogehogehogehoge");
 		assertEquals("hogehogehogehoge", Build.BRAND);
+	}
 
+	@Test
+	public void overwrite_instanceField() throws Exception {
+		InvocationTarget target = new InvocationTarget();
+		assertEquals("foo", Intenso.get(target, "foo"));
+		Intenso.overwrite(target, "foo", "bar");
+		assertEquals("bar", Intenso.get(target, "foo"));
 	}
 
 	@Test

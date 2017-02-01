@@ -5,6 +5,7 @@ package com.drivemode.intenso;
  */
 
 public class InvocationTarget {
+	private final String foo = "foo";
 	private String piyo = "piyo";
 
 	private String hoge() {
