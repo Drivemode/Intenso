@@ -46,7 +46,11 @@ Intenso.overwrite(Target.class, "fieldName", "value");
 
 ## Download
 
-TBA
+Gradle
+
+```
+compile 'com.drivemode:Intenso:1.0.0@aar
+```
 
 ## License
 
